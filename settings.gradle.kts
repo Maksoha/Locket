@@ -12,7 +12,6 @@ pluginManagement {
     }
 }
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
@@ -21,3 +20,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Locket"
 include(":app")
+include(":core_ui")
+include(":feature_feed")
+include(":data")
