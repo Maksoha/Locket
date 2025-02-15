@@ -1,4 +1,4 @@
-package ru.chads.feature_feed
+package ru.chads.feature_feed.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +15,7 @@ import ru.chads.data.model.LocketInfo
 import ru.chads.data.model.TimeoutException
 import ru.chads.data.repository.LocketFeedRepository
 import ru.chads.data.runSuspendCatching
+import ru.chads.navigation.NavCommand
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
@@ -31,7 +32,10 @@ class LocketFeedViewModel @Inject constructor(private val repository: LocketFeed
     val lockedFeedState get() = _lockedFeedState
 
     private val _snackbarMessage = MutableSharedFlow<String>()
-    val snackbarMessage = _snackbarMessage.asSharedFlow()
+    val snackbarMessage get() = _snackbarMessage.asSharedFlow()
+
+    private val _navCommand = MutableSharedFlow<NavCommand>()
+    val navCommand get() = _navCommand.asSharedFlow()
 
 
     private var locketItemsLoading = AtomicBoolean(false)
@@ -41,16 +45,18 @@ class LocketFeedViewModel @Inject constructor(private val repository: LocketFeed
     }
 
     fun onAddLocketClick() {
-
+        viewModelScope.launch {
+            _navCommand.emit(NavCommand.ToLocketCreator)
+        }
     }
 
     fun onRetryClick() {
         fetchLockets()
     }
 
-    fun checkAndFetchMoreLockets(сurrentSnippet: Int, totalSnippets: Int) {
-        val shouldLoadMore = сurrentSnippet % 10 == LOAD_MORE_THRESHOLD
-        val isNearEndOfList = сurrentSnippet + 10 > totalSnippets
+    fun checkAndFetchMoreLockets(currentSnippet: Int, totalSnippets: Int) {
+        val shouldLoadMore = currentSnippet % 10 == LOAD_MORE_THRESHOLD
+        val isNearEndOfList = currentSnippet + 10 > totalSnippets
         if (shouldLoadMore && isNearEndOfList) {
             fetchLockets()
         }
@@ -68,7 +74,7 @@ class LocketFeedViewModel @Inject constructor(private val repository: LocketFeed
                         _lockedFeedState.update { state ->
                             when (state) {
                                 is State.Loading, is State.Error -> State.Loaded(locketSnippets = newLockets.toImmutableList())
-                                is State.Loaded -> State.Loaded(locketSnippets = (state.locketSnippets + newLockets).toImmutableList())
+                                is State.Loaded -> state.copy(locketSnippets = (state.locketSnippets + newLockets).toImmutableList())
                             }
                         }
                     }
@@ -80,7 +86,7 @@ class LocketFeedViewModel @Inject constructor(private val repository: LocketFeed
     }
 
     private fun handleError(throwable: Throwable) {
-        when(throwable) {
+        when (throwable) {
             is TimeoutException -> viewModelScope.launch {
                 _snackbarMessage.emit(throwable.message ?: DEFAULT_ERROR_MESSAGE)
             }

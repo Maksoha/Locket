@@ -1,4 +1,4 @@
-package ru.chads.feature_feed
+package ru.chads.feature_feed.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,20 +27,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import ru.chads.core_ui.theme.DayNightPreview
 import ru.chads.core_ui.theme.LocketTheme
 import ru.chads.data.model.LocketInfo
-import ru.chads.feature_feed.components.LocketSnippet
-import ru.chads.feature_feed.components.LocketSnippetSkeleton
-
+import ru.chads.feature_feed.viewmodel.LocketFeedViewModel
+import ru.chads.feature_feed.viewmodel.State
+import ru.chads.feature_feed.ui.components.LocketSnippet
+import ru.chads.feature_feed.ui.components.LocketSnippetSkeleton
 
 @Composable
 fun LocketFeedScreen(
     viewModel: LocketFeedViewModel,
     snackbarHostState: SnackbarHostState,
+    navController: NavController,
 ) {
     val state by viewModel.lockedFeedState.collectAsStateWithLifecycle()
 
@@ -49,19 +53,15 @@ fun LocketFeedScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.navCommand.collectLatest { command ->
+            navController.navigate(command.route)
+        }
+    }
+
     Scaffold(
-        floatingActionButton = {
-            IconButton(
-                modifier = Modifier.size(FabSize),
-                onClick = viewModel::onAddLocketClick
-            ) {
-                Icon(
-                    modifier = Modifier.fillMaxSize(),
-                    imageVector = Icons.Filled.AddCircle,
-                    contentDescription = null
-                )
-            }
-        },
+        floatingActionButton = { FabButton(onAddClick = viewModel::onAddLocketClick) },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButtonPosition = FabPosition.Center
     ) { paddingValues ->
         when (state) {
@@ -121,6 +121,20 @@ private fun LoadedContent(
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             LocketSnippet(locketSnippet = snippets[page], modifier = Modifier.offset(y = -FabSize))
         }
+    }
+}
+
+@Composable
+private fun FabButton(onAddClick: () -> Unit) {
+    IconButton(
+        modifier = Modifier.size(FabSize),
+        onClick = onAddClick
+    ) {
+        Icon(
+            modifier = Modifier.fillMaxSize(),
+            imageVector = Icons.Filled.AddCircle,
+            contentDescription = null
+        )
     }
 }
 

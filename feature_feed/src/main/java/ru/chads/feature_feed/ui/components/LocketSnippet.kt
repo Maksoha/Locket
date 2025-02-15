@@ -1,10 +1,11 @@
-package ru.chads.feature_feed.components
+package ru.chads.feature_feed.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,8 +36,8 @@ fun LocketSnippet(locketSnippet: LocketInfo, modifier: Modifier = Modifier) =
             AsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(SnippetHeight)
-                    .clip(RoundedCornerShape(16.dp)),
+                    .aspectRatio(1f)
+                    .clip(RoundedCornerShape(24.dp)),
                 model = imageUrl,
                 contentScale = ContentScale.Crop,
                 contentDescription = null
@@ -72,8 +73,8 @@ fun LocketSnippetSkeleton(modifier: Modifier = Modifier, skeletonColor: Color = 
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(SnippetHeight)
-                .clip(RoundedCornerShape(16.dp))
+                .aspectRatio(1f)
+                .clip(RoundedCornerShape(24.dp))
                 .background(skeletonColor)
                 .shimmer()
         )
@@ -111,7 +112,6 @@ fun LocketSnippetSkeleton(modifier: Modifier = Modifier, skeletonColor: Color = 
 }
 
 private const val DescriptionMaxLines = 3
-private val SnippetHeight = 288.dp
 private val UserAvatarSize = 24.dp
 
 @DayNightPreview

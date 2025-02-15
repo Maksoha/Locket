@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/core_ui" />
             <option value="$PROJECT_DIR$/data" />
+            <option value="$PROJECT_DIR$/feature_creator" />
             <option value="$PROJECT_DIR$/feature_feed" />
           </set>
         </option>

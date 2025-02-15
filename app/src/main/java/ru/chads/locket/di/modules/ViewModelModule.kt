@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
-import ru.chads.feature_feed.LocketFeedViewModel
+import ru.chads.feature_feed.viewmodel.LocketFeedViewModel
 import ru.chads.locket.di.ViewModelKey
 import ru.chads.locket.factory.ViewModelFactory
 

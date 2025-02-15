@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import ru.chads.feature_feed.LocketFeedViewModel
+import ru.chads.feature_feed.viewmodel.LocketFeedViewModel
 
 @Module
 abstract class FeedModule {
