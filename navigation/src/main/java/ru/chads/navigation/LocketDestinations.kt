@@ -5,7 +5,7 @@ sealed interface LocketDestination {
 }
 
 sealed interface LocketDestinations: LocketDestination {
-    data object LockedFeed: LocketDestinations
+    data object LocketFeed: LocketDestinations
     data object LocketCreator: LocketDestinations
     data object LocketEditor: LocketDestinations
 }

@@ -38,6 +38,7 @@ import ru.chads.feature_feed.viewmodel.LocketFeedViewModel
 import ru.chads.feature_feed.viewmodel.State
 import ru.chads.feature_feed.ui.components.LocketSnippet
 import ru.chads.feature_feed.ui.components.LocketSnippetSkeleton
+import ru.chads.navigation.NavCommand
 
 @Composable
 fun LocketFeedScreen(
@@ -45,7 +46,7 @@ fun LocketFeedScreen(
     snackbarHostState: SnackbarHostState,
     navController: NavController,
 ) {
-    val state by viewModel.lockedFeedState.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.snackbarMessage.collectLatest { message ->
@@ -55,12 +56,15 @@ fun LocketFeedScreen(
 
     LaunchedEffect(Unit) {
         viewModel.navCommand.collectLatest { command ->
-            navController.navigate(command.route)
+            when (command) {
+                is NavCommand.RouterCommand -> navController.navigate(command.route)
+                NavCommand.GoBack -> navController.popBackStack()
+            }
         }
     }
 
     Scaffold(
-        floatingActionButton = { FabButton(onAddClick = viewModel::onAddLocketClick) },
+        floatingActionButton = { Fab(onAddClick = viewModel::onAddLocketClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButtonPosition = FabPosition.Center
     ) { paddingValues ->
@@ -125,7 +129,7 @@ private fun LoadedContent(
 }
 
 @Composable
-private fun FabButton(onAddClick: () -> Unit) {
+private fun Fab(onAddClick: () -> Unit) {
     IconButton(
         modifier = Modifier.size(FabSize),
         onClick = onAddClick

@@ -1,4 +1,4 @@
-package ru.chads.data.repository
+package ru.chads.data.repository.feed
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf

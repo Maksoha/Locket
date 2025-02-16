@@ -1,8 +1,11 @@
 package ru.chads.feature_camera_preview.ui
 
 import android.Manifest
-import android.graphics.Bitmap
-import androidx.camera.core.ImageCapture.OnImageCapturedCallback
+import android.content.Context
+import android.net.Uri
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.view.CameraController
 import androidx.camera.view.LifecycleCameraController
@@ -50,17 +53,18 @@ import ru.chads.feature_camera_preview.viewmodel.CameraPreviewViewModel
 import ru.chads.feature_camera_preview.viewmodel.CameraSelector
 import ru.chads.feature_camera_preview.viewmodel.State
 import ru.chads.navigation.NavCommand
+import java.io.File
 import androidx.camera.core.CameraSelector as androidCameraSelector
 
+@RequiresApi(Build.VERSION_CODES.FROYO)
 @Composable
-fun LocketCreatorScreen(
+fun CameraPreviewScreen(
     navController: NavController,
     snackbarHostState: SnackbarHostState,
     viewModel: CameraPreviewViewModel = viewModel(),
 ) {
     LocketTheme(darkTheme = true) {
-        val state by viewModel.cameraPreviewState.collectAsStateWithLifecycle()
-
+        val state by viewModel.state.collectAsStateWithLifecycle()
         val context = LocalContext.current
         val cameraController = remember {
             LifecycleCameraController(context).apply {
@@ -68,18 +72,27 @@ fun LocketCreatorScreen(
             }
         }
 
-        val requestPermission = permissionRequester(
+        val requestCameraPermission = permissionRequester(
             permission = Manifest.permission.CAMERA,
             onResult = viewModel::handlePermissionRequestResult
         )
 
         LaunchedEffect(Unit) {
-            requestPermission()
+            requestCameraPermission()
         }
 
         LaunchedEffect(Unit) {
             viewModel.imageCaptureErrorMessage.collectLatest { errorMsg ->
                 snackbarHostState.showSnackbar(errorMsg)
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            viewModel.navCommand.collectLatest { navCommand ->
+                when (navCommand) {
+                    is NavCommand.RouterCommand -> navController.navigate(navCommand.route)
+                    NavCommand.GoBack -> navController.popBackStack()
+                }
             }
         }
 
@@ -94,17 +107,10 @@ fun LocketCreatorScreen(
                         cameraSelector = state.cameraSelector,
                         onFlashChanged = viewModel::onFlashChanged,
                         onPhotoTaken = {
-                            cameraController.takePicture(
-                                ContextCompat.getMainExecutor(context),
-                                object : OnImageCapturedCallback() {
-                                    override fun onPostviewBitmapAvailable(bitmap: Bitmap) {
-                                        navController.navigate(NavCommand.ToLocketEditor.route)
-                                    }
-
-                                    override fun onError(exception: ImageCaptureException) {
-                                        viewModel.handleImageCaptureFailed(exception)
-                                    }
-                                }
+                            cameraController.captureImage(
+                                context = context,
+                                onImageSaved = viewModel::onImageSaved,
+                                onError = viewModel::handleImageSavedFailed
                             )
                         },
                         onCameraFlipped = viewModel::onCameraFlipped
@@ -188,14 +194,45 @@ private fun CameraSelector.toAndroidCameraSelector() = when (this) {
     CameraSelector.Back -> androidCameraSelector.DEFAULT_FRONT_CAMERA
 }
 
+@RequiresApi(Build.VERSION_CODES.FROYO)
+fun CameraController.captureImage(
+    context: Context,
+    onImageSaved: (Uri) -> Unit,
+    onError: (Exception) -> Unit
+) {
+    val photoFile = File(
+        context.externalCacheDir,
+        "${System.currentTimeMillis()}.jpg"
+    )
+
+    val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile).build()
+
+    this.takePicture(
+        outputOptions,
+        ContextCompat.getMainExecutor(context),
+        object : ImageCapture.OnImageSavedCallback {
+            override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
+                outputFileResults.savedUri?.let { uri ->
+                    onImageSaved(uri)
+                } ?: onError(IllegalArgumentException("Saved URI is null"))
+            }
+
+            override fun onError(exception: ImageCaptureException) {
+                onError(exception)
+            }
+        }
+    )
+}
+
 private val IconButtonSize = 36.dp
 private val CameraPreviewYOffset = (-48).dp
 
+@RequiresApi(Build.VERSION_CODES.FROYO)
 @DayNightPreview
 @Composable
 private fun Preview() {
     LocketTheme {
-        LocketCreatorScreen(
+        CameraPreviewScreen(
             snackbarHostState = remember { SnackbarHostState() },
             navController = rememberNavController()
         )

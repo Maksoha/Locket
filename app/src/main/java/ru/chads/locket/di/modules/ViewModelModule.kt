@@ -19,4 +19,5 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(LocketFeedViewModel::class)
     abstract fun bindLocketFeedViewModel(viewModel: LocketFeedViewModel): ViewModel
+
 }

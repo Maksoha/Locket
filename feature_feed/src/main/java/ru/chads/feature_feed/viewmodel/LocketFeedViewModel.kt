@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import ru.chads.data.model.LocketInfo
 import ru.chads.data.model.TimeoutException
-import ru.chads.data.repository.LocketFeedRepository
+import ru.chads.data.repository.feed.LocketFeedRepository
 import ru.chads.data.runSuspendCatching
 import ru.chads.navigation.NavCommand
 import java.util.concurrent.atomic.AtomicBoolean
@@ -28,8 +28,8 @@ sealed interface State {
 class LocketFeedViewModel @Inject constructor(private val repository: LocketFeedRepository) :
     ViewModel() {
 
-    private val _lockedFeedState: MutableStateFlow<State> = MutableStateFlow(State.Loading)
-    val lockedFeedState get() = _lockedFeedState
+    private val _state: MutableStateFlow<State> = MutableStateFlow(State.Loading)
+    val state get() = _state
 
     private val _snackbarMessage = MutableSharedFlow<String>()
     val snackbarMessage get() = _snackbarMessage.asSharedFlow()
@@ -46,7 +46,7 @@ class LocketFeedViewModel @Inject constructor(private val repository: LocketFeed
 
     fun onAddLocketClick() {
         viewModelScope.launch {
-            _navCommand.emit(NavCommand.ToLocketCreator)
+            _navCommand.emit(NavCommand.RouterCommand.ToLocketCreator)
         }
     }
 
@@ -71,7 +71,7 @@ class LocketFeedViewModel @Inject constructor(private val repository: LocketFeed
             }.fold(
                 onSuccess = { lockets ->
                     lockets.collect { newLockets ->
-                        _lockedFeedState.update { state ->
+                        _state.update { state ->
                             when (state) {
                                 is State.Loading, is State.Error -> State.Loaded(locketSnippets = newLockets.toImmutableList())
                                 is State.Loaded -> state.copy(locketSnippets = (state.locketSnippets + newLockets).toImmutableList())
@@ -91,7 +91,7 @@ class LocketFeedViewModel @Inject constructor(private val repository: LocketFeed
                 _snackbarMessage.emit(throwable.message ?: DEFAULT_ERROR_MESSAGE)
             }
 
-            else -> _lockedFeedState.update {
+            else -> _state.update {
                 State.Error(throwable.message ?: DEFAULT_ERROR_MESSAGE)
             }
         }

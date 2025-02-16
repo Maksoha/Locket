@@ -49,6 +49,7 @@ dependencies {
     implementation(project(":data"))
     implementation(project(":feature_camera_preview"))
     implementation(project(":navigation"))
+    implementation(project(":feature_editor"))
     kapt(libs.dagger.compiler)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.material3)
