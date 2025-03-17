@@ -6,6 +6,7 @@ import ru.chads.navigation.NavCommand.RouterCommand.ToLocketCreator.toEncodeUri
 sealed interface NavCommand {
 
     sealed class RouterCommand(val route: String) : NavCommand {
+        data object ToLocketFeed: RouterCommand(LocketDestinations.LocketFeed.route)
         data object ToLocketCreator : RouterCommand(LocketDestinations.LocketCreator.route)
         data class ToLocketEditor(val imageUri: Uri) :
             RouterCommand(

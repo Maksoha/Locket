@@ -42,4 +42,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(project(":core_ui"))
+    implementation(project(":domain"))
+    implementation(project(":coroutines"))
 }

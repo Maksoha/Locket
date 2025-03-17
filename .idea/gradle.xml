@@ -11,10 +11,15 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/background_worker" />
             <option value="$PROJECT_DIR$/core_ui" />
+            <option value="$PROJECT_DIR$/coroutines" />
             <option value="$PROJECT_DIR$/data" />
-            <option value="$PROJECT_DIR$/feature_creator" />
+            <option value="$PROJECT_DIR$/domain" />
+            <option value="$PROJECT_DIR$/feature_camera_preview" />
+            <option value="$PROJECT_DIR$/feature_editor" />
             <option value="$PROJECT_DIR$/feature_feed" />
+            <option value="$PROJECT_DIR$/navigation" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

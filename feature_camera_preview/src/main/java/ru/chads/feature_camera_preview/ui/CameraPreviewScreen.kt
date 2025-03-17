@@ -56,7 +56,6 @@ import ru.chads.navigation.NavCommand
 import java.io.File
 import androidx.camera.core.CameraSelector as androidCameraSelector
 
-@RequiresApi(Build.VERSION_CODES.FROYO)
 @Composable
 fun CameraPreviewScreen(
     navController: NavController,

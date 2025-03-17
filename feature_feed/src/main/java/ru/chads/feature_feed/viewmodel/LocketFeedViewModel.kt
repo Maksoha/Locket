@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import ru.chads.data.model.LocketInfo
 import ru.chads.data.model.TimeoutException
 import ru.chads.data.repository.feed.LocketFeedRepository
-import ru.chads.data.runSuspendCatching
+import ru.chads.coroutines.runSuspendCatching
 import ru.chads.navigation.NavCommand
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject

@@ -15,14 +15,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import javax.inject.Inject
 import ru.chads.core_ui.theme.LocketTheme
 import ru.chads.feature_camera_preview.ui.CameraPreviewScreen
 import ru.chads.feature_editor.ui.LocketEditorScreen
 import ru.chads.feature_editor.viewmodel.LocketEditorViewModelFactory
 import ru.chads.feature_feed.ui.LocketFeedScreen
+import ru.chads.locket.LocketApplication
 import ru.chads.locket.di.components.DaggerLocketFeedComponent
 import ru.chads.navigation.LocketDestinations
-import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
     @Inject
@@ -31,6 +32,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        val app = application as LocketApplication
 
         DaggerLocketFeedComponent.builder()
             .build()
@@ -63,7 +66,11 @@ class MainActivity : ComponentActivity() {
                         arguments = listOf(navArgument("imageUri") { type = NavType.StringType })
                     ) { backStackEntry ->
                         val imageUri = Uri.parse(backStackEntry.arguments?.getString("imageUri"))
-                        val factory = LocketEditorViewModelFactory(imageUri, viewModelFactory)
+                        val factory = LocketEditorViewModelFactory(
+                            imageUri = imageUri,
+                            imageUploader = app.imageUploader,
+                            viewModelProviderFactory = viewModelFactory
+                        )
                         LocketEditorScreen(
                             navController = navController,
                             viewModel = viewModel(factory = factory)

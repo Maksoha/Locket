@@ -33,6 +33,7 @@ dependencies {
     implementation(project(":data"))
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(project(":navigation"))
+    implementation(project(":coroutines"))
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.dagger)

@@ -1,4 +1,4 @@
-package ru.chads.data
+package ru.chads.coroutines
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.TimeoutCancellationException
