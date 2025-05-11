@@ -25,8 +25,9 @@ sealed interface State {
     data class Loaded(val locketSnippets: ImmutableList<LocketInfo>) : State
 }
 
-class LocketFeedViewModel @Inject constructor(private val repository: LocketFeedRepository) :
-    ViewModel() {
+class LocketFeedViewModel @Inject constructor(
+    private val repository: LocketFeedRepository
+) : ViewModel() {
 
     private val _state: MutableStateFlow<State> = MutableStateFlow(State.Loading)
     val state get() = _state

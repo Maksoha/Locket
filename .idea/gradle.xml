@@ -11,6 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/auth_reg" />
             <option value="$PROJECT_DIR$/background_worker" />
             <option value="$PROJECT_DIR$/core_ui" />
             <option value="$PROJECT_DIR$/coroutines" />
@@ -20,6 +21,7 @@
             <option value="$PROJECT_DIR$/feature_editor" />
             <option value="$PROJECT_DIR$/feature_feed" />
             <option value="$PROJECT_DIR$/navigation" />
+            <option value="$PROJECT_DIR$/network" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

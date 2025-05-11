@@ -23,4 +23,5 @@ android {
 dependencies {
     implementation(libs.dagger)
     implementation(libs.androidx.core.ktx)
+    implementation(project(":network"))
 }

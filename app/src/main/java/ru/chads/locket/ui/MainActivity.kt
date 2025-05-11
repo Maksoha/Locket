@@ -15,8 +15,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.auth_reg.AuthRegScreen
+import com.example.auth_reg.AuthRegViewModel
+import com.example.network.NetworkProvider
 import javax.inject.Inject
 import ru.chads.core_ui.theme.LocketTheme
+import ru.chads.data.repository.auth_reg.AuthRegRepositoryImpl
 import ru.chads.feature_camera_preview.ui.CameraPreviewScreen
 import ru.chads.feature_editor.ui.LocketEditorScreen
 import ru.chads.feature_editor.viewmodel.LocketEditorViewModelFactory
@@ -46,8 +50,18 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = LocketDestinations.LocketFeed.route
+                    startDestination = LocketDestinations.AuthReg.route
                 ) {
+                    composable(LocketDestinations.AuthReg.route) {
+                        AuthRegScreen(
+                            viewModel = AuthRegViewModel(
+                                AuthRegRepositoryImpl(
+                                    NetworkProvider.authRegApi
+                                )
+                            ),
+                            navController = navController
+                        )
+                    }
                     composable(LocketDestinations.LocketFeed.route) {
                         LocketFeedScreen(
                             viewModel = viewModel(factory = viewModelFactory),

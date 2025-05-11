@@ -54,6 +54,8 @@ dependencies {
     implementation(project(":core_ui"))
     implementation(project(":domain"))
     implementation(project(":background_worker"))
+    implementation(project(":auth_reg"))
+    implementation(project(":network"))
     implementation(libs.androidx.work.runtime.ktx)
     kapt(libs.dagger.compiler)
     implementation(libs.kotlinx.collections.immutable)
@@ -69,4 +71,8 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.runtime.ktx)
     testImplementation(libs.junit)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.logging.interceptor)
 }
